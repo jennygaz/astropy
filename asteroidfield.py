@@ -2,6 +2,7 @@ import pygame
 import random
 from asteroid import Asteroid
 from constants import *
+from powerup import PowerUp
 
 
 class AsteroidField(pygame.sprite.Sprite):
@@ -49,3 +50,9 @@ class AsteroidField(pygame.sprite.Sprite):
             position = edge[1](random.uniform(0, 1))
             kind = random.randint(1, ASTEROID_KINDS)
             self.spawn(ASTEROID_MIN_RADIUS * kind, position, velocity)
+
+            # spawn a power-up with a certain probability
+            if random.random() < POWERUP_SPAWN_RATE:
+                powerup_type = random.choice(POWERUP_TYPES)
+                powerup = PowerUp(position.x, position.y, powerup_type)
+                self.containers.add(powerup)

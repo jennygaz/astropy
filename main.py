@@ -5,6 +5,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from powerup import PowerUp
 
 def main():
     pygame.init()
@@ -18,10 +19,12 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
     Shot.containers = (shots, updatable, drawable)
+    PowerUp.containers = (powerups, updatable, drawable)
     player1 = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     asteroid_field = AsteroidField()
     updatable.add(player1)
@@ -39,6 +42,12 @@ def main():
             for shot in shots:
                 if asteroid.is_colliding(shot):
                     asteroid.split()
+                    shot.kill()
+        for powerup in powerups:
+            for shot in shots:
+                if powerup.is_colliding(shot):
+                    powerup.apply_effect(player1)
+                    powerup.kill()
                     shot.kill()
         for sprite in drawable:
             sprite.draw(screen)
