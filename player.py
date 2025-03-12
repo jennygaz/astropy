@@ -2,6 +2,7 @@ import pygame
 from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN
 from circleshape import CircleShape
 from shot import Shot
+from specialshot import SpecialShot
 
 class Player(CircleShape):
     containers = ()
@@ -9,6 +10,8 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.shoot_timer = 0.0
         self.rotation = 0
+        self.fire_rate = PLAYER_SHOOT_COOLDOWN
+        self.damage = 1
     
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -43,7 +46,12 @@ class Player(CircleShape):
     def shoot(self):
         if self.shoot_timer > 0:
             return
-        shot = Shot(self.position.x, self.position.y)
+        shot = SpecialShot(self.position.x, self.position.y, self.damage)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
-        self.shoot_timer = PLAYER_SHOOT_COOLDOWN
-    
+        self.shoot_timer = self.fire_rate
+
+    def apply_powerup(self, powerup_type):
+        if powerup_type == 'fire_rate':
+            self.fire_rate *= 0.5
+        elif powerup_type == 'damage':
+            self.damage *= 2
